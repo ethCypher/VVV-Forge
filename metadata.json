@@ -1,0 +1,5 @@
+{
+  "name": "VVV-Forge: Premium NFT Collection Builder",
+  "description": "A high-end, client-side deterministic NFT generator compatible with vvv.so and Solana marketplaces. Featuring weighted rarities, compatibility rules, and real-time previews.",
+  "requestFramePermissions": []
+}
