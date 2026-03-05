@@ -24,7 +24,8 @@ import LayerEditor from './components/LayerEditor';
 import PreviewGrid from './components/PreviewGrid';
 import QAStats from './components/QAStats';
 import ExportPanel from './components/ExportPanel';
-import AuthOverlay from './components/AuthOverlay';
+
+const PROJECT_KEY = 'default';
 
 const INITIAL_LAYERS: Layer[] = [
   { id: '1', name: 'Background', traits: [], isVisible: true, isLocked: false },
@@ -45,7 +46,6 @@ const INITIAL_CONFIG: CollectionConfig = {
 };
 
 export default function App() {
-  const [authKey, setAuthKey] = useState<string | null>(null);
   const [view, setView] = useState<GenerationView>(GenerationView.EDITOR);
   const [layers, setLayers] = useState<Layer[]>(INITIAL_LAYERS);
   const [config, setConfig] = useState<CollectionConfig>(INITIAL_CONFIG);
@@ -67,7 +67,6 @@ export default function App() {
 
   // Persistence logic - Integrated with IndexedDB
   const saveProject = useCallback(async () => {
-    if (!authKey) return;
     setSaveStatus('saving');
 
     try {
@@ -96,7 +95,7 @@ export default function App() {
         tokens
       };
 
-      localStorage.setItem(`vvv_forge_project_${authKey}`, JSON.stringify(projectData));
+      localStorage.setItem(`vvv_forge_project_${PROJECT_KEY}`, JSON.stringify(projectData));
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 3000);
     } catch (err) {
@@ -104,7 +103,7 @@ export default function App() {
       setSaveStatus('idle');
       alert("Storage error: Could not save assets. Check browser disk space.");
     }
-  }, [authKey, layers, config, tokens]);
+  }, [layers, config, tokens]);
 
   const loadProject = useCallback(async (key: string) => {
     const data = localStorage.getItem(`vvv_forge_project_${key}`);
@@ -135,8 +134,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (authKey) loadProject(authKey);
-  }, [authKey, loadProject]);
+    loadProject(PROJECT_KEY);
+  }, [loadProject]);
 
   // Generate tokens logic
   const generateCollection = useCallback(() => {
@@ -186,8 +185,6 @@ export default function App() {
     };
     setLayers([...layers, newLayer]);
   };
-
-  if (!authKey) return <AuthOverlay onUnlock={setAuthKey} />;
 
   return (
     <div className="flex h-screen w-full bg-[#0a0a0c] text-[#e2e8f0] overflow-hidden font-sans">
@@ -328,8 +325,8 @@ export default function App() {
         </div>
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1">
-            <Cloud className={`w-3 h-3 ${authKey ? 'text-green-500 animate-pulse' : 'text-gray-500'}`} />
-            VAULT: {authKey ? 'ENCRYPTED' : 'UNLOCKED'}
+            <Cloud className="w-3 h-3 text-green-500" />
+            VAULT: LOCAL
           </span>
           <span>REVISION: 1.2.1</span>
         </div>

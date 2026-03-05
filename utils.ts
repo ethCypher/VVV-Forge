@@ -50,14 +50,6 @@ export function createPRNG(seed: string) {
   };
 }
 
-// Generate a hash for a string (used for basic auth key derivation)
-export async function hashCredentials(username: string, password: string): Promise<string> {
-  const msgUint8 = new TextEncoder().encode(username + ":" + password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
 // Generate a hash for a set of traits to ensure uniqueness
 export function generateTokenHash(traits: Record<string, string>, layers: Layer[]): string {
   return layers
@@ -143,6 +135,7 @@ export function formatMetadata(token: GeneratedToken, config: CollectionConfig, 
   };
 }
 
+// Export NFT collection - images and metadata
 export async function createZipArchive(
   tokens: GeneratedToken[],
   layers: Layer[],
