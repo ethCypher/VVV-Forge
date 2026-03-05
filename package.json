@@ -8,7 +8,8 @@
     "dev:server": "node server.js",
     "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\"",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && node -e \"require('fs').writeFileSync('docs/.nojekyll','')\" && git add docs && git commit -m \"Update GitHub Pages\" && git push"
   },
   "dependencies": {
     "react-dom": "^19.2.4",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "gh-pages": "^6.2.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0",
     "concurrently": "^8.2.2"
