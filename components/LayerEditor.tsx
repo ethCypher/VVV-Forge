@@ -42,9 +42,10 @@ const LayerEditor: React.FC<LayerEditorProps> = ({ layer, layers, setLayers, ind
     const files = e.target.files;
     if (!files) return;
 
-    const newTraits: Trait[] = Array.from(files).map((file: any) => ({
+    const imageFiles = Array.from(files).filter((file: File) => file.type.startsWith('image/'));
+    const newTraits: Trait[] = imageFiles.map((file: File) => ({
       id: Math.random().toString(36).substring(7),
-      name: file.name.split('.')[0].replace(/_/g, ' '),
+      name: file.name.replace(/\.[^.]+$/, '').replace(/_/g, ' '),
       weight: 10,
       imageFile: file,
       previewUrl: URL.createObjectURL(file),
@@ -52,6 +53,7 @@ const LayerEditor: React.FC<LayerEditorProps> = ({ layer, layers, setLayers, ind
     }));
 
     updateLayer({ traits: [...layer.traits, ...newTraits] });
+    e.target.value = '';
   };
 
   const removeTrait = (traitId: string) => {
@@ -157,7 +159,7 @@ const LayerEditor: React.FC<LayerEditorProps> = ({ layer, layers, setLayers, ind
             <input 
               type="file" 
               multiple 
-              accept="image/png"
+              accept="image/*"
               ref={fileInputRef}
               onChange={handleFileUpload}
               className="hidden" 
